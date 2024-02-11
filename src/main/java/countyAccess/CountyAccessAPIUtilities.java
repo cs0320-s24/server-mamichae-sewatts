@@ -1,4 +1,4 @@
-package census;
+package countyAccess;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -9,13 +9,14 @@ import java.io.IOException;
  */
 
 public class CountyAccessAPIUtilities {
+
   /**
    * Deserializes JSON from the BoredAPI into an Activity object.
    *
    * @param jsonCensus
    * @return
    */
-  public static CountyAccess deserializeCensus(String jsonCensus){
+  public static CountyAccess deserializeCensus(String jsonCensus) {
     try {
       // Initializes Moshi
       Moshi moshi = new Moshi.Builder().build();

@@ -8,22 +8,22 @@ import java.io.IOException;
  * Deserializing JSON from the API into a Census object.
  */
 
-public class CensusAPIUtilities {
+public class CountyAccessAPIUtilities {
   /**
    * Deserializes JSON from the BoredAPI into an Activity object.
    *
    * @param jsonCensus
    * @return
    */
-  public static Census deserializeCensus(String jsonCensus){
+  public static CountyAccess deserializeCensus(String jsonCensus){
     try {
       // Initializes Moshi
       Moshi moshi = new Moshi.Builder().build();
 
       // Initializes an adapter to a CensusData class then uses it to parse the JSON.
-      JsonAdapter<Census> adapter = moshi.adapter(Census.class);
+      JsonAdapter<CountyAccess> adapter = moshi.adapter(CountyAccess.class);
 
-      Census censusData = adapter.fromJson(jsonCensus);
+      CountyAccess censusData = adapter.fromJson(jsonCensus);
 
       return censusData;
     } catch (IOException e) {

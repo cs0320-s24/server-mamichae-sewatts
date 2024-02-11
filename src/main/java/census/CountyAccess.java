@@ -5,5 +5,5 @@ package census;
  */
 
 
-public class Census {
+public class CountyAccess {
 }

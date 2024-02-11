@@ -1,8 +1,8 @@
-package census;
+package countyAccess;
 
 /**
  * deserializing JSON from the API into a Census return thing.
  */
 
-public class CensusAPIUtilities {
+public class CountyAccessAPIUtilities {
 }

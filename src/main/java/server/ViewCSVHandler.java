@@ -1,6 +1,6 @@
 package server;
 
-import CSV.CSVInformation;
+import CSV.InformationOnCSV;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import java.util.HashMap;
@@ -12,9 +12,9 @@ import spark.Route;
 import com.squareup.moshi.Types;
 
 public class ViewCSVHandler implements Route {
-    private final CSVInformation csv;
+    private final InformationOnCSV csv;
 
-    public ViewCSVHandler(CSVInformation csv) {
+    public ViewCSVHandler(InformationOnCSV csv) {
         this.csv = csv;
     }
 
@@ -22,10 +22,10 @@ public class ViewCSVHandler implements Route {
     public Object handle(Request request, Response response) {
         Map<String, Object> responseMap = new HashMap<>();
         try {
-            if (!this.csv.isLoaded) {
+            if (!this.csv.getLoaded()) {
                 responseMap.put("error", "no CSV loaded");
             } else {
-                List<List<String>> parsedData = csv.getParsedData();
+                List<List<String>> parsedData = csv.getParsedText();
                 if (parsedData.isEmpty()) {
                     responseMap.put("result", "success - file is empty");
                 } else {
@@ -36,7 +36,7 @@ public class ViewCSVHandler implements Route {
         } catch (Exception e) {
             responseMap.put("error", "error while processing data");
         }
-        // have to return respone map within try/catch?
+        // have to return response map within try/catch?
         return toJson(responseMap);
     }
 

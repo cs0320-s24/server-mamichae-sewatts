@@ -2,13 +2,14 @@ package CSV;
 
 import java.util.List;
 
-public class InformationOnCSV {
+public class AccessCSV {
     private List<List<String>> parsedText;
     private List<String> header;
-
     private Boolean loaded;
 
-    public InformationOnCSV() {
+
+
+    public AccessCSV() {
         this.loaded = false;
     }
 

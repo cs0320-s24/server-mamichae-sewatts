@@ -2,11 +2,10 @@ package server;
 
 import CSV.CSVParser;
 import CSV.FactoryFailureException;
-import CSV.InformationOnCSV;
+import CSV.AccessCSV;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.ProcessHandle.Info;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +16,9 @@ import spark.Route;
 
 public class LoadCSVHandler implements Route {
 
-    private InformationOnCSV csv;
+    private AccessCSV csv;
 
-    public LoadCSVHandler(InformationOnCSV csv) {
+    public LoadCSVHandler(AccessCSV csv) {
         this.csv = csv;
     }
 

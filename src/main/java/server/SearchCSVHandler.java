@@ -1,10 +1,9 @@
 package server;
 
-import CSV.CSVParser;
 import CSV.CSVSearcher;
 import CSV.FactoryFailureException;
 import CSV.InconsistentRowException;
-import CSV.InformationOnCSV;
+import CSV.AccessCSV;
 import CSV.NotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,9 +16,9 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 public class SearchCSVHandler implements Route {
-    private final InformationOnCSV csv;
+    private final AccessCSV csv;
 
-    public SearchCSVHandler(InformationOnCSV csv) {
+    public SearchCSVHandler(AccessCSV csv) {
         this.csv = csv;
     }
 

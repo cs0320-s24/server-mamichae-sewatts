@@ -25,7 +25,6 @@ public class CSVSearcher {
     this.listOfStringRows = this.parser.parse();
   }
 
-  //TODO: CHECK THIS, EDITED CONSTRUCTOR
   public CSVSearcher(List<List<String>> parsedText) throws IOException, FactoryFailureException, InconsistentRowException {
     this.listOfStringRows = parsedText;
   }

@@ -23,6 +23,10 @@ public class SearchCSVHandler implements Route {
         this.csv = csv;
     }
 
+
+    //CHANGE ERROR HANDLING
+
+
     @Override
     public Object handle(Request request, Response response) throws DatasourceException {
         String searchValue = request.queryParams("value");
@@ -43,6 +47,8 @@ public class SearchCSVHandler implements Route {
                         searchResult = searcher.search(searchValue, columnIndex);
                     } catch (NumberFormatException e) {
                         searchResult = searcher.search(searchValue, columnIdentifier);
+                    } catch (NotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                 } else {
                     // Search the entire CSV
@@ -54,7 +60,7 @@ public class SearchCSVHandler implements Route {
             } else {
                 responseMap.put("error", "no CSV loaded");
             }
-        } catch (IOException e) {
+        } catch (IOException | FactoryFailureException | InconsistentRowException | NotFoundException e) {
             responseMap.put("error", "error while processing data: " + e.getMessage());
         }
 

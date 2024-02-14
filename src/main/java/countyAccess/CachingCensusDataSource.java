@@ -3,6 +3,7 @@ package countyAccess;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
 import server.DatasourceException;
 
 
@@ -18,11 +19,11 @@ public class CachingCensusDataSource implements CensusDataSource {
         this.original = original;
         this.cache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
+                //Is this how long we want it to last?
                 .expireAfterWrite(10, TimeUnit.MINUTES)
-                .removalListener(MY_LISTENER)
-                //TODO: CHECK THIS
+                //TODO: CHECK THIS, don't need a removal listener right?
                 .build(
-                        new CacheLoader<Key, Graph>() {
+                        new CacheLoader<LocationData, AccessData>() {
                             public AccessData load(LocationData location) throws DatasourceException {
                                 return original.getBroadbandSubscription(location);
                             }

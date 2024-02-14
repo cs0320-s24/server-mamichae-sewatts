@@ -24,17 +24,19 @@ public class CensusAPIUtilities {
    * @param jsonCensus
    * @return
    */
-  public static CountyAccess deserializeCensus(String jsonCensus) {
+  //should it return anything, probably no?
+  //CHANGE THIS
+  public static AccessData deserializeCensus(String jsonCensus) {
     try {
       // Initializes Moshi
       Moshi moshi = new Moshi.Builder().build();
 
       // Initializes an adapter to a CensusData class then uses it to parse the JSON.
-      JsonAdapter<CountyAccess> adapter = moshi.adapter(CountyAccess.class);
+      JsonAdapter<AccessData> adapter = moshi.adapter(AccessData.class);
 
-      CountyAccess censusData = adapter.fromJson(jsonCensus);
+      AccessData accessData = adapter.fromJson(jsonCensus);
 
-      return censusData;
+      return accessData;
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error deserializing JSON into Activity: " + e.getMessage());

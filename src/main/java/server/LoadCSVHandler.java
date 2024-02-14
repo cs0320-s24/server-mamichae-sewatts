@@ -1,10 +1,6 @@
 package server;
 
-import CSV.CSVParser;
-import CSV.FactoryFailureException;
-import CSV.AccessCSV;
-import CSV.InconsistentRowException;
-import CSV.StringListCreateFromRow;
+import CSV.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -52,7 +49,7 @@ public class LoadCSVHandler implements Route {
           throw new RuntimeException(e);
         }
 
-      return responseMap;
+        return responseMap;
     }
 
 }

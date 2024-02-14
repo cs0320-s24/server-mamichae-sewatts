@@ -1,5 +1,6 @@
 package server;
 
+import com.squareup.moshi.Moshi;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -7,6 +8,13 @@ import spark.Route;
 public class CountyAccessHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
+        // Retrieve 'state' and 'county' query parameters from the HTTP request
+        String state = request.queryParams("state");
+        String county = request.queryParams("county");
+
+        // Create a Moshi instance for JSON serialization/deserialization
+        Moshi moshi = new Moshi.Builder().build();
+
         return null;
     }
 }

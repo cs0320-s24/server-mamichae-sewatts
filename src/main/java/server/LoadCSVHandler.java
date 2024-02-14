@@ -2,7 +2,9 @@ package server;
 
 import CSV.CSVParser;
 import CSV.FactoryFailureException;
+import CSV.InconsistentRowException;
 import CSV.InformationOnCSV;
+import CSV.StringListCreateFromRow;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,9 +34,7 @@ public class LoadCSVHandler implements Route {
 
         // need buffered? or just file reader
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            // what to add for object?
-            // new creator from row?
-            CSVParser parser = new CSVParser(reader, hasHeaders);
+            CSVParser parser = new CSVParser(reader, new StringListCreateFromRow(), hasHeaders);
             List<List<String>> parsedData = parser.parse();
 
             this.csv.setParsedText(parsedData);
@@ -49,9 +49,11 @@ public class LoadCSVHandler implements Route {
             responseMap.put("error", "IO error occurred: " + e.getMessage());
         } catch (FactoryFailureException e) {
             responseMap.put("error", "Failed to create CSV parser: " + e.getMessage());
+        } catch (InconsistentRowException e) {
+          throw new RuntimeException(e);
         }
 
-        return responseMap;
+      return responseMap;
     }
 
 }

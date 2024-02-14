@@ -62,6 +62,7 @@ public class SearchCSVHandler implements Route {
     }
     private List<List<String>> performSearch(List<List<String>> parsedData, List<String> headers, String value, String columnIdentifier)
         throws IOException, NotFoundException, InconsistentRowException, FactoryFailureException {
+        // requires parsed object
         CSVSearcher searcher = new CSVSearcher(parsedData);
 
         if (columnIdentifier.equalsIgnoreCase("none")) {

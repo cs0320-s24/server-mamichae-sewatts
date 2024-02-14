@@ -11,7 +11,7 @@ import java.io.IOException;
 public class CountyAccessAPIUtilities {
 
   /**
-   * Deserializes JSON from the BoredAPI into an Activity object.
+   * Deserializes JSON from the API into a Census object
    *
    * @param jsonCensus
    * @return

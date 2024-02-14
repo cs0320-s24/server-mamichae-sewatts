@@ -7,10 +7,12 @@ public class AccessCSV {
     private List<String> header;
     private Boolean loaded;
 
+    private Boolean hasHeaders;
 
 
     public AccessCSV() {
         this.loaded = false;
+        this.hasHeaders = false;
     }
 
     public void setParsedText(List<List<String>> text) {
@@ -36,5 +38,13 @@ public class AccessCSV {
 
     public List<List<String>> getParsedText(){
         return this.parsedText;
+    }
+
+    public void setHasHeaders(Boolean hasHeaders){
+        this.hasHeaders = hasHeaders;
+    }
+
+    public Boolean getHasHeaders(){
+        return this.hasHeaders;
     }
 }

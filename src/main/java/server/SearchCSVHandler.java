@@ -31,15 +31,13 @@ public class SearchCSVHandler implements Route {
         String searchValue = request.queryParams("value");
         String columnIdentifier = request.queryParams("columnID");
 
+
         List<List<String>> searchResult = null;
         Map<String, Object> responseMap = new HashMap<>();
 
         try {
             if (this.csv.getLoaded()) {
-                // how to change to either input parser object
-                // or change parameters
-                // no casting
-                CSVSearcher searcher = new CSVSearcher(this.csv.getParsedText());
+                CSVSearcher searcher = new CSVSearcher(this.csv.getParsedText(), this.csv.getHeader(), this.csv.getHasHeaders());
                 if (columnIdentifier != null && !columnIdentifier.isEmpty()) {
                     try {
                         int columnIndex = Integer.parseInt(columnIdentifier);

@@ -1,6 +1,6 @@
 package server;
 
-import CSV.InformationOnCSV;
+import CSV.AccessCSV;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import java.util.HashMap;
@@ -12,9 +12,9 @@ import spark.Route;
 import com.squareup.moshi.Types;
 
 public class ViewCSVHandler implements Route {
-    private final InformationOnCSV csv;
+    private final AccessCSV csv;
 
-    public ViewCSVHandler(InformationOnCSV csv) {
+    public ViewCSVHandler(AccessCSV csv) {
         this.csv = csv;
     }
 

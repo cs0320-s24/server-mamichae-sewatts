@@ -1,10 +1,9 @@
 package server;
 
-import CSV.CSVParser;
 import CSV.CSVSearcher;
 import CSV.FactoryFailureException;
 import CSV.InconsistentRowException;
-import CSV.InformationOnCSV;
+import CSV.AccessCSV;
 import CSV.NotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,11 +16,15 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
 public class SearchCSVHandler implements Route {
-    private final InformationOnCSV csv;
+    private final AccessCSV csv;
 
-    public SearchCSVHandler(InformationOnCSV csv) {
+    public SearchCSVHandler(AccessCSV csv) {
         this.csv = csv;
     }
+
+
+    //CHANGE ERROR HANDLING
+
 
     @Override
     public Object handle(Request request, Response response) throws DatasourceException {
@@ -43,6 +46,8 @@ public class SearchCSVHandler implements Route {
                         searchResult = searcher.search(searchValue, columnIndex);
                     } catch (NumberFormatException e) {
                         searchResult = searcher.search(searchValue, columnIdentifier);
+                    } catch (NotFoundException e) {
+                        throw new RuntimeException(e);
                     }
                 } else {
                     // Search the entire CSV
@@ -54,7 +59,7 @@ public class SearchCSVHandler implements Route {
             } else {
                 responseMap.put("error", "no CSV loaded");
             }
-        } catch (IOException e) {
+        } catch (IOException | FactoryFailureException | InconsistentRowException | NotFoundException e) {
             responseMap.put("error", "error while processing data: " + e.getMessage());
         }
 

@@ -65,21 +65,6 @@ public class SearchCSVHandler implements Route {
 
         return toJson(responseMap);
     }
-    private List<List<String>> performSearch(List<List<String>> parsedData, List<String> headers, String value, String columnIdentifier)
-        throws IOException, NotFoundException, InconsistentRowException, FactoryFailureException {
-        // requires parsed object
-        CSVSearcher searcher = new CSVSearcher(parsedData);
-
-        if (columnIdentifier.equalsIgnoreCase("none")) {
-            return searcher.search(value);
-        } else {
-            try {
-                return searcher.search(value, columnIdentifier);
-            } catch (NumberFormatException | NotFoundException e) {
-                return searcher.search(value, columnIdentifier);
-            }
-        }
-    }
 
     private String toJson(Object object) {
         Moshi moshi = new Moshi.Builder().build();

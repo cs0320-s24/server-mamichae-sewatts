@@ -81,7 +81,7 @@ public class TestHandlers {
         tryRequest("loadcsv?file=data/census/income_by_race.csv");
     // supposed to get an OK response ??? but actually returns 500
     // (the *connection* is supposed to work, the *API* provides an error response)
-    //assertEquals(200, clientConnection1.getResponseCode());
+    assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
     assertEquals(200, viewConnection.getResponseCode());
     Map<String, Object> response =
@@ -103,5 +103,20 @@ public class TestHandlers {
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
     assertEquals("success", response.get("result"));
+  }
+
+  @Test
+  public void testSearchCSVHandlerFailure() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?path=data/census/dol_ri_earnings_disparity.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
+
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=White&columnID=1");
+    assertEquals(200, searchConnection.getResponseCode());
+
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
   }
 }

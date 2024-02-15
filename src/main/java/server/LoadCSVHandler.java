@@ -25,16 +25,22 @@ public class LoadCSVHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws IOException, InconsistentRowException, FactoryFailureException {
     String filepath = request.queryParams("filepath");
+    String headers = request.queryParams("headers");
     Boolean hasHeaders = Boolean.valueOf(request.queryParams("headers"));
-    this.csv.setHasHeaders(hasHeaders);
-
     Map<String, String> responseMap = new HashMap<>();
 
+    if (filepath == null || hasHeaders == null){
+      responseMap.put("query_filepath", filepath);
+      responseMap.put("query_headers", headers);
+      responseMap.put("type", "error");
+      responseMap.put("error_type", "missing_parameter");
+      responseMap.put("error_arg", filepath == null ? "lat" : "lon");
+      return responseMap;
+    }
+    this.csv.setHasHeaders(hasHeaders);
 
     // need buffered? or just file reader
     try {
-
-
       BufferedReader reader = new BufferedReader(new FileReader(filepath));
       CSVParser parser = new CSVParser(reader, new StringListCreateFromRow(), hasHeaders);
       List<List<String>> parsedData = parser.parse();
@@ -55,6 +61,10 @@ public class LoadCSVHandler implements Route {
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       responseMap.put("error", "File not found");
+      return responseMap;
+    } catch (IllegalArgumentException e){
+      responseMap.put("result", "error");
+      responseMap.put("error", "bad parameter");
       return responseMap;
     }
 

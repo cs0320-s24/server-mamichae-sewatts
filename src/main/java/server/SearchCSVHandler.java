@@ -35,6 +35,12 @@ public class SearchCSVHandler implements Route {
     List<List<String>> searchResult = null;
     Map<String, Object> responseMap = new HashMap<>();
 
+    if (searchValue == null || searchValue.isEmpty() || columnIdentifier == null || columnIdentifier.isEmpty()) {
+      // Respond with an error if either searchValue or columnIdentifier is missing
+      responseMap.put("error", "missing or invalid search parameters.");
+      return toJson(responseMap);
+    }
+
     try {
       if (this.csv.getLoaded()) {
         CSVSearcher searcher = new CSVSearcher(this.csv.getParsedText(), this.csv.getHeader(), this.csv.getHasHeaders());
@@ -45,7 +51,9 @@ public class SearchCSVHandler implements Route {
           } catch (NumberFormatException e) {
             searchResult = searcher.search(searchValue, columnIdentifier);
           } catch (NotFoundException e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            responseMap.put("error", "columnID not found");
+            return toJson(responseMap);
           }
         } else {
           // Search the entire CSV
@@ -55,6 +63,7 @@ public class SearchCSVHandler implements Route {
         responseMap.put("result", "success");
         responseMap.put("data", searchResult);
       } else {
+        responseMap.put("result", "error");
         responseMap.put("error", "no CSV loaded");
       }
     } catch (IOException | FactoryFailureException | InconsistentRowException | NotFoundException e) {

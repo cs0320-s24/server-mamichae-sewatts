@@ -79,8 +79,7 @@ public class TestHandlers {
     // setup w incorrect parameters
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?file=data/census/income_by_race.csv");
-    // supposed to get an OK response ??? but actually returns 500
-    // (the *connection* is supposed to work, the *API* provides an error response)
+    // (the *connection* works, the *API* provides an error response)
     assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
     assertEquals(200, viewConnection.getResponseCode());

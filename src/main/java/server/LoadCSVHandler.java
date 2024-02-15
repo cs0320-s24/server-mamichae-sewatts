@@ -29,12 +29,13 @@ public class LoadCSVHandler implements Route {
     Boolean hasHeaders = Boolean.valueOf(request.queryParams("headers"));
     Map<String, String> responseMap = new HashMap<>();
 
+    // check if query parameters are null
     if (filepath == null || hasHeaders == null){
       responseMap.put("query_filepath", filepath);
       responseMap.put("query_headers", headers);
       responseMap.put("type", "error");
       responseMap.put("error_type", "missing_parameter");
-      responseMap.put("error_arg", filepath == null ? "lat" : "lon");
+      responseMap.put("error_arg", filepath == null ? "filepath" : "headers");
       return responseMap;
     }
     this.csv.setHasHeaders(hasHeaders);

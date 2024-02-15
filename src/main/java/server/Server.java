@@ -3,6 +3,7 @@ package server;
 import static spark.Spark.after;
 
 import CSV.AccessCSV;
+import countyAccess.CachingCensusDataSource;
 import countyAccess.CensusAPIUtilities;
 import countyAccess.CensusDataSource;
 import spark.Spark;
@@ -38,8 +39,7 @@ public class Server {
   }
 
   public static void main(String[] args) {
-    // or should this be called on the caching class, no right?
-    Server server = new Server(new AccessCSV(), new CensusAPIUtilities());
+    Server server = new Server(new AccessCSV(), new CachingCensusDataSource(new CensusAPIUtilities()));
     System.out.println("Server started at http://localhost:" + port);
   }
 }

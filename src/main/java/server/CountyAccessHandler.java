@@ -41,7 +41,6 @@ public class CountyAccessHandler implements Route {
         try {
             LocationData location = new LocationData(state, county);
 
-            //How do we make sure this is thrown on the cached one?
             AccessData accessData = this.censusData.getBroadbandSubscription(location);
 
             responseMap.put("result", "success");

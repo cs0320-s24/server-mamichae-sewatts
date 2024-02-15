@@ -16,9 +16,7 @@ public class CachingCensusDataSource implements CensusDataSource {
     this.cache =
         CacheBuilder.newBuilder()
             .maximumSize(1000)
-            // Is this how long we want it to last?
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            // TODO: CHECK THIS, don't need a removal listener right?
             .build(
                 new CacheLoader<LocationData, AccessData>() {
                   public AccessData load(LocationData location) throws DatasourceException {
@@ -30,10 +28,7 @@ public class CachingCensusDataSource implements CensusDataSource {
   @Override
   public AccessData getBroadbandSubscription(LocationData location) throws DatasourceException {
     try {
-      // TODO: CHECK THIS IS THAT THE RIGHT FORMAT
       return cache.get(location, () -> original.getBroadbandSubscription(location));
-
-      // TODO: CHECK THIS ERROR HANDLING
     } catch (ExecutionException e) {
       // Extract the cause of the exception and rethrow, CHECK THIS
       Throwable cause = e.getCause();

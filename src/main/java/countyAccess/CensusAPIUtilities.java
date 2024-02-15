@@ -34,8 +34,10 @@ public class CensusAPIUtilities implements CensusDataSource {
   // should it return anything, probably no?
   // CHANGE THIS
   private static void accessStateCodes() throws DatasourceException {
+    if(!stateNametoCode.isEmpty()) {
+      return;
+    }
     try {
-
       URL requestURL =
           new URL("https", "api.census.gov", "/data/2010/dec/sf1?get=NAME&for=state:*");
       HttpURLConnection clientStateConnection = connect(requestURL);
@@ -64,6 +66,9 @@ public class CensusAPIUtilities implements CensusDataSource {
   }
 
   private static void accessCountyCodes(String stateCode) throws DatasourceException {
+    if(!countyNameToCode.isEmpty()) {
+      return;
+    }
     try {
 
       URL requestURL =
@@ -84,7 +89,7 @@ public class CensusAPIUtilities implements CensusDataSource {
       clientStateConnection.disconnect();
 
       for (int i = 1; i < counties.size(); i++) {
-        stateNametoCode.put(counties.get(i).get(0), counties.get(i).get(2));
+        countyNameToCode.put(counties.get(i).get(0), counties.get(i).get(2));
       }
     } catch (IOException e) {
       throw new DatasourceException(e.getMessage());
@@ -109,6 +114,7 @@ public class CensusAPIUtilities implements CensusDataSource {
 
   @Override
   public AccessData getBroadbandSubscription(LocationData location) throws DatasourceException {
+    System.out.println("calling getBroadBandSubscription");
     return getBroadbandSubscriptionHelper(location.state(), location.county());
   }
 
@@ -119,7 +125,9 @@ public class CensusAPIUtilities implements CensusDataSource {
       String stateCode = stateNametoCode.get(state);
 
       accessCountyCodes(stateCode);
-      String countyCode = countyNameToCode.get(county + ", " + state);
+
+      String countyName = county + ", " + state;
+      String countyCode = countyNameToCode.get(countyName);
 
       URL requestURL =
           new URL(
@@ -141,12 +149,10 @@ public class CensusAPIUtilities implements CensusDataSource {
           adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
       clientConnection.disconnect();
 
-      // CHECK THIS:
       if (data == null) {
         throw new DatasourceException("Malformed response from Census API");
       }
 
-      // TODO: CHECK THIS WHERE IS DATE FORMAT REQUIRED TO BE LIKE THIS
       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
       Date timestamp = new Date();
 

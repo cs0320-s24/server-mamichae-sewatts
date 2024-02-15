@@ -7,6 +7,7 @@ import com.squareup.moshi.Types;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Map;
 import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
@@ -105,7 +106,7 @@ public class TestHandlers {
   }
 
   @Test
-  public void testSearchCSVHandlerFailure() throws IOException {
+  public void testSearchCSVHandlerFailureBadPath() throws IOException {
     HttpURLConnection loadCSVConnection =
         tryRequest("loadcsv?path=data/census/dol_ri_earnings_disparity.csv&headers=true");
     assertEquals(200, loadCSVConnection.getResponseCode());
@@ -117,5 +118,39 @@ public class TestHandlers {
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
     assertEquals("error", response.get("result"));
+  }
+
+  @Test
+  public void testSearchCSVHandlerFailureBadValueQuery() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
+
+    // value not in csv data
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=Blue&columnID=1");
+    assertEquals(200, searchConnection.getResponseCode());
+
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
+    assertEquals(new ArrayList<>(), response.get("data"));
+  }
+
+  @Test
+  public void testSearchCSVHandlerFailureBadColumnIDQuery() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
+
+    // columnID out of scope
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=Black&columnID=8");
+    assertEquals(200, searchConnection.getResponseCode());
+
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("columnID not found", response.get("error"));
   }
 }

@@ -52,6 +52,7 @@ public class SearchCSVHandler implements Route {
             searchResult = searcher.search(searchValue, columnIdentifier);
           } catch (NotFoundException e) {
             //throw new RuntimeException(e);
+            responseMap.put("result", "error");
             responseMap.put("error", "columnID not found");
             return toJson(responseMap);
           }

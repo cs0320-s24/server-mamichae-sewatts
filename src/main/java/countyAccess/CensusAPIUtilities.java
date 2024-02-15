@@ -18,11 +18,11 @@ import server.DatasourceException;
 /** Deserializing JSON from the API into a Census object. */
 public class CensusAPIUtilities implements CensusDataSource {
 
-  private static HashMap<String, String> stateNametoCode;
+  private static HashMap<String, String> stateNameToCode;
   private static HashMap<String, String> countyNameToCode;
 
   public CensusAPIUtilities() {
-    this.stateNametoCode = new HashMap<>();
+    this.stateNameToCode = new HashMap<>();
     this.countyNameToCode = new HashMap<>();
   }
   /**
@@ -34,7 +34,7 @@ public class CensusAPIUtilities implements CensusDataSource {
   // should it return anything, probably no?
   // CHANGE THIS
   private static void accessStateCodes() throws DatasourceException {
-    if(!stateNametoCode.isEmpty()) {
+    if(!stateNameToCode.isEmpty()) {
       return;
     }
     try {
@@ -53,7 +53,7 @@ public class CensusAPIUtilities implements CensusDataSource {
       clientStateConnection.disconnect();
 
       for (int i = 1; i < states.size(); i++) {
-        stateNametoCode.put(states.get(i).get(0), states.get(i).get(1));
+        stateNameToCode.put(states.get(i).get(0), states.get(i).get(1));
       }
 
       // check this, put in a message
@@ -122,7 +122,7 @@ public class CensusAPIUtilities implements CensusDataSource {
       throws DatasourceException {
     try {
       accessStateCodes();
-      String stateCode = stateNametoCode.get(state);
+      String stateCode = stateNameToCode.get(state);
 
       accessCountyCodes(stateCode);
 

@@ -25,10 +25,10 @@ public class CSVSearcher {
     this.listOfStringRows = this.parser.parse();
   }
 
-  public CSVSearcher(List<List<String>> parsedText) throws IOException, FactoryFailureException, InconsistentRowException {
+  public CSVSearcher(List<List<String>> parsedText)
+      throws IOException, FactoryFailureException, InconsistentRowException {
     this.listOfStringRows = parsedText;
   }
-
 
   /**
    * Calls search with the searchWord and with a string header - so only searches in the column that

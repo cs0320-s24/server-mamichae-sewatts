@@ -8,6 +8,10 @@ public class CSVSearcher {
   List<List<String>> listOfStringRows;
   CSVParser parser;
 
+  List<String> headerList;
+
+  Boolean hasHeader;
+
   /**
    * Searches for a given searchWord in a CSV document parsed into a List<List<String>> where each
    * row is a List<String>. Searches include partial matches if the document contains the given
@@ -23,11 +27,15 @@ public class CSVSearcher {
       throws IOException, FactoryFailureException, InconsistentRowException {
     this.parser = parser;
     this.listOfStringRows = this.parser.parse();
+    this.hasHeader = this.parser.getHasHeader();
+    this.headerList = this.parser.getHeaderList();
   }
 
-  public CSVSearcher(List<List<String>> parsedText)
-      throws IOException, FactoryFailureException, InconsistentRowException {
+
+  public CSVSearcher(List<List<String>> parsedText, List<String> headerList, Boolean hasHeader) throws IOException, FactoryFailureException, InconsistentRowException {
     this.listOfStringRows = parsedText;
+    this.headerList = headerList;
+    this.hasHeader = hasHeader;
   }
 
   /**
@@ -40,10 +48,10 @@ public class CSVSearcher {
    * @return rows that have the search word in the given column
    */
   public List<List<String>> search(String searchWord, String header) throws NotFoundException {
-    if (!this.parser.getHasHeader()) {
+    if (!this.hasHeader) {
       throw new NotFoundException("CSV missing headers");
     }
-    List<String> headerList = this.parser.getHeaderList();
+    List<String> headerList = this.headerList;
     int wordCounter = 0;
     for (String word : headerList) {
       if (word.equals(header)) {
@@ -65,11 +73,11 @@ public class CSVSearcher {
    * @return rows that have the search word in the given column
    */
   public List<List<String>> search(String searchWord, int header) throws NotFoundException {
-    if (!this.parser.getHasHeader()) {
+    if (!this.hasHeader) {
       throw new NotFoundException("CSV missing headers");
     }
 
-    List<String> headerList = this.parser.getHeaderList();
+    List<String> headerList = this.headerList;
     if (header >= headerList.size()) {
       throw new NotFoundException("Header index out of bounds of CSV header list");
     }
@@ -99,6 +107,8 @@ public class CSVSearcher {
     for (List<String> stringRow : this.listOfStringRows) {
       for (String word : stringRow) {
         if (word.contains(searchWord)) {
+          System.out.println("searchWord" + searchWord);
+          System.out.println("word" + word);
           returnList.add(stringRow);
           break;
         }

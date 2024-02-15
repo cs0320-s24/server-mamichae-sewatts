@@ -31,12 +31,12 @@ public class CSVSearcher {
     this.headerList = this.parser.getHeaderList();
   }
 
+
   public CSVSearcher(List<List<String>> parsedText, List<String> headerList, Boolean hasHeader) throws IOException, FactoryFailureException, InconsistentRowException {
     this.listOfStringRows = parsedText;
     this.headerList = headerList;
     this.hasHeader = hasHeader;
   }
-
 
   /**
    * Calls search with the searchWord and with a string header - so only searches in the column that

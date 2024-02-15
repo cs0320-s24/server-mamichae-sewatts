@@ -1,5 +1,6 @@
 package server;
 
+
 import CSV.AccessCSV;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -21,6 +22,7 @@ public class CountyAccessHandler implements Route {
     public CountyAccessHandler(CensusDataSource censusData) {
         this.censusData = censusData;
     }
+
     @Override
     public Object handle(Request request, Response response) {
         // Retrieve 'state' and 'county' query parameters

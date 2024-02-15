@@ -7,7 +7,6 @@ import com.squareup.moshi.Types;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;

@@ -50,22 +50,3 @@ public class CachingCensusDataSource implements CensusDataSource {
 }
 
 
-
-//
-//public class CachingCensusDataSource implements CensusDataSource {
-//    private final CensusDataSource original;
-//
-//    public CachingCensusDataSource(CensusDataSource original) {
-//        this.original = original;
-//    }
-//
-//    //Create cache google thingy
-//
-//    @Override
-//    public AccessData getBroadbandSubscription(LocationData location) throws DatasourceException {
-//        //if already in the cache just return that
-//        //otherwise call the getbroadband subscription thingy on original but save it in cache
-//
-//        throw new UnsupportedOperationException();
-//    }
-//}

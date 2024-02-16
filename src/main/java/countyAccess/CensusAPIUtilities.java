@@ -66,9 +66,9 @@ public class CensusAPIUtilities implements CensusDataSource {
   }
 
   private static void accessCountyCodes(String stateCode) throws DatasourceException {
-    if(!countyNameToCode.isEmpty()) {
-      return;
-    }
+    //if(!stateNameToCode.containsKey())
+
+
     try {
 
       URL requestURL =
@@ -101,6 +101,9 @@ public class CensusAPIUtilities implements CensusDataSource {
    * needed.
    */
   private static HttpURLConnection connect(URL requestURL) throws DatasourceException, IOException {
+    System.out.println("URL + " + requestURL);
+    System.out.println("stateNameToCode: " + stateNameToCode.keySet());
+    System.out.println("countyNameToCode: " + countyNameToCode.keySet());
     URLConnection urlConnection = requestURL.openConnection();
     if (!(urlConnection instanceof HttpURLConnection))
       throw new DatasourceException("unexpected: result of connection wasn't HTTP");

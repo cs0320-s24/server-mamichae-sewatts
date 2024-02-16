@@ -31,21 +31,33 @@ import server.SearchCSVHandler;
 import server.ViewCSVHandler;
 import spark.Spark;
 
+/**
+ * This class contains unit tests for the SearchCSVHandler class.
+ */
 public class TestSearchHandler {
   private final JsonAdapter<Map<String, Object>> adapter;
 
+  /**
+   * Constructor to initialize the JSON adapter.
+   */
   public TestSearchHandler() {
     Moshi moshi = new Moshi.Builder().build();
     java.lang.reflect.Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
     adapter = moshi.adapter(type);
   }
 
+  /**
+   * Setup method to configure Spark server before all tests.
+   */
   @BeforeAll
   public static void setupBeforeAll() {
     Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING);
   }
 
+  /**
+   * Setup method to initialize components before each test.
+   */
   @BeforeEach
   public void setupBeforeEach() {
     AccessCSV accessCSV = new AccessCSV();
@@ -56,15 +68,24 @@ public class TestSearchHandler {
     Spark.awaitInitialization();
   }
 
+  /**
+   * Teardown method to clean up resources after each test.
+   */
   @AfterEach
   public void tearDownAfterEach() {
-    // Gracefully stop Spark listening on both endpoints after each test
     Spark.unmap("loadcsv");
     Spark.unmap("searchcsv");
     Spark.unmap("viewcsv");
-    Spark.awaitStop(); // don't proceed until the server is stopped
+    Spark.awaitStop();
   }
 
+  /**
+   * Helper method to send an HTTP request to the Spark server.
+   *
+   * @param apiCall The API endpoint to call.
+   * @return The HttpURLConnection object representing the connection.
+   * @throws IOException If an I/O error occurs.
+   */
   private HttpURLConnection tryRequest(String apiCall) throws IOException {
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
@@ -73,6 +94,11 @@ public class TestSearchHandler {
     return clientConnection;
   }
 
+  /**
+   * Test method to check successful search by column ID.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testSuccessColumnID() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -96,6 +122,11 @@ public class TestSearchHandler {
     assertEquals("success", response.get("result"));
   }
 
+  /**
+   * Test method to check successful search by column name.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testSuccessColumnName() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -117,6 +148,11 @@ public class TestSearchHandler {
     assertEquals("success", response.get("result"));
   }
 
+  /**
+   * Test method to check failure in case of invalid path.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testFailureBadPath() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -132,6 +168,11 @@ public class TestSearchHandler {
     assertEquals("error", response.get("result"));
   }
 
+  /**
+   * Test method to check failure in case of empty path.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testEmptyFile() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -149,6 +190,11 @@ public class TestSearchHandler {
 
   }
 
+  /**
+   * Test method to check failure in case of file not found.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testFileNotFound() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -166,6 +212,11 @@ public class TestSearchHandler {
 
   }
 
+  /**
+   * Test method to check failure in case of invalid value query.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testFailureBadValueQuery() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -183,6 +234,11 @@ public class TestSearchHandler {
     assertEquals(new ArrayList<>(), response.get("data"));
   }
 
+  /**
+   * Test method to check failure in case of invalid columnID query.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testBadColumnIDQuery() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -199,6 +255,11 @@ public class TestSearchHandler {
     assertEquals("columnID not found", response.get("error"));
   }
 
+  /**
+   * Test method to check failure in case of malformed data.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testMalformedData() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -215,6 +276,11 @@ public class TestSearchHandler {
     assertEquals("no CSV loaded", response.get("error"));
   }
 
+  /**
+   * Test method to check failure in case of missing value parameter.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testMissingParametersValue() throws IOException {
     HttpURLConnection loadCSVConnection =
@@ -231,6 +297,11 @@ public class TestSearchHandler {
     assertEquals("missing or invalid search parameters", response.get("error"));
   }
 
+  /**
+   * Test method to check failure in case of missing column parameter.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testMissingParametersColumn() throws IOException {
     HttpURLConnection loadCSVConnection =

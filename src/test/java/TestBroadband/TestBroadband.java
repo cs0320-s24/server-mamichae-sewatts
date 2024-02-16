@@ -6,7 +6,6 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import countyAccess.AccessData;
-import countyAccess.CensusAPIUtilities;
 import countyAccess.CensusDataSource;
 import countyAccess.LocationData;
 import java.io.IOException;
@@ -24,8 +23,15 @@ import org.junit.jupiter.api.Test;
 import server.CountyAccessHandler;
 import spark.Spark;
 
+/**
+ * This class contains testing for broadband access functionality.
+ */
 public class TestBroadband {
 
+  /**
+   * Setup method to configure the Spark server before
+   * any test case is executed.
+   */
   @BeforeAll
   public static void setupOnce() {
     Spark.port(0);
@@ -37,6 +43,10 @@ public class TestBroadband {
   private JsonAdapter<Map<String, Object>> adapter;
   private JsonAdapter<AccessData> censusDataAdapter;
 
+  /**
+   * Setup method to initialize components
+   * before each test is executed.
+   */
   @BeforeEach
   public void setup() {
     CensusDataSource mockedSource =
@@ -51,12 +61,22 @@ public class TestBroadband {
     censusDataAdapter = moshi.adapter(AccessData.class);
   }
 
+  /**
+   * Teardown method to clean up resources after each test is executed.
+   */
   @AfterEach
   public void tearDown() {
     Spark.unmap("broadband");
     Spark.awaitStop();
   }
 
+  /**
+   * Helper method to initiate an HTTP request to the Spark server.
+   *
+   * @param apiCall The API endpoint to call.
+   * @return The HttpURLConnection object representing the connection.
+   * @throws IOException If an I/O error occurs.
+   */
   private HttpURLConnection tryRequest(String apiCall) throws IOException {
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
@@ -70,10 +90,10 @@ public class TestBroadband {
   final LocationData ny = new LocationData("New+York", "Onondaga+County");
 
   /**
-   * Tests that doing a broadband search results in a success (code 200) and that the result:
-   * success gets printed
+   * Test method to verify that a broadband search request returns successful response
+   * with the expected data.
    *
-   * @throws IOException
+   * @throws IOException If an I/O error occurs.
    */
   @Test
   public void testCensusRequestSuccess() throws IOException {

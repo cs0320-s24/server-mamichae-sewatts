@@ -25,22 +25,34 @@ import server.SearchCSVHandler;
 import server.ViewCSVHandler;
 import spark.Spark;
 
+/**
+ * This class contains unit tests for the ViewCSVHandler class.
+ */
 public class TestViewHandler {
   private final JsonAdapter<Map<String, Object>> adapter;
   private final Moshi moshi;
 
+  /**
+   * Constructor to initialize the JSON adapter and Moshi instance.
+   */
   public TestViewHandler() {
     this.moshi = new Moshi.Builder().build();
     java.lang.reflect.Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
     adapter = moshi.adapter(type);
   }
 
+  /**
+   * Setup method to configure Spark server before all tests.
+   */
   @BeforeAll
   public static void setupBeforeAll() {
     Spark.port(0);
     Logger.getLogger("").setLevel(Level.WARNING);
   }
 
+  /**
+   * Setup method to initialize resources before each test.
+   */
   @BeforeEach
   public void setupBeforeEach() {
     AccessCSV accessCSV = new AccessCSV();
@@ -51,6 +63,9 @@ public class TestViewHandler {
     Spark.awaitInitialization();
   }
 
+  /**
+   * Teardown method to clean up resources after each test.
+   */
   @AfterEach
   public void tearDownAfterEach() {
     Spark.unmap("loadcsv");
@@ -59,6 +74,13 @@ public class TestViewHandler {
     Spark.awaitStop();
   }
 
+  /**
+   * Helper method to send an HTTP request to the Spark server.
+   *
+   * @param apiCall The API endpoint to call.
+   * @return The HttpURLConnection object representing the connection.
+   * @throws IOException If an I/O error occurs.
+   */
   private HttpURLConnection tryRequest(String apiCall) throws IOException {
     URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
@@ -67,6 +89,11 @@ public class TestViewHandler {
     return clientConnection;
   }
 
+  /**
+   * Test method to check successful view of CSV data.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testSuccess() throws IOException {
     HttpURLConnection loadConnection =
@@ -79,6 +106,11 @@ public class TestViewHandler {
     assertEquals("success", response.get("result"));
   }
 
+  /**
+   * Test method to check successful view of CSV data with specific content.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testSuccessDataOutput() throws IOException {
     HttpURLConnection loadConnection =
@@ -98,6 +130,11 @@ public class TestViewHandler {
     assertEquals("success", response.get("result"));
   }
 
+  /**
+   * Test method to check failure in case of bad file path.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testFailureBadPath() throws IOException {
     HttpURLConnection loadConnection =
@@ -110,6 +147,11 @@ public class TestViewHandler {
     assertEquals("error", response.get("result"));
   }
 
+  /**
+   * Test method to check failure in case of empty file.
+   *
+   * @throws IOException If an I/O error occurs.
+   */
   @Test
   public void testFailureEmptyFile() throws IOException {
     HttpURLConnection loadConnection =

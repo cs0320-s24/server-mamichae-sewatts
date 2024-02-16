@@ -16,14 +16,32 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+/**
+ * Route handler for loading CSV files.
+ */
 public class LoadCSVHandler implements Route {
 
   private AccessCSV csv;
 
+  /**
+   * Constructor for initializing the LoadCSVHandler with an AccessCSV instance.
+   *
+   * @param csv The AccessCSV instance to use for loading CSV files.
+   */
   public LoadCSVHandler(AccessCSV csv) {
     this.csv = csv;
   }
 
+  /**
+   * Method to handle HTTP requests for loading CSV files.
+   *
+   * @param request  The HTTP request object.
+   * @param response The HTTP response object.
+   * @return The response data in JSON format.
+   * @throws IOException              If an I/O error occurs.
+   * @throws InconsistentRowException If the rows in the CSV are inconsistent.
+   * @throws FactoryFailureException  If there's a failure in creating objects.
+   */
   @Override
   public Object handle(Request request, Response response) throws IOException, InconsistentRowException, FactoryFailureException {
     String filepath = request.queryParams("filepath");
@@ -70,6 +88,12 @@ public class LoadCSVHandler implements Route {
 
   }
 
+  /**
+   * Helper method to serialize an object to JSON format.
+   *
+   * @param object The object to serialize.
+   * @return The JSON representation of the object.
+   */
   private String toJson(Object object) {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Object> adapter = moshi.adapter(Object.class);

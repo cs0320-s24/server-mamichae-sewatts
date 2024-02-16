@@ -21,15 +21,19 @@ public class CensusAPIUtilities implements CensusDataSource {
   private static HashMap<String, String> stateNameToCode;
   private static HashMap<String, String> countyNameToCode;
 
+  /**
+   * Constructor for the CensusAPIUtilities class.
+   */
   public CensusAPIUtilities() {
     this.stateNameToCode = new HashMap<>();
     this.countyNameToCode = new HashMap<>();
   }
+
   /**
-   * Deserializes JSON from the API into a Census object
+   * Accesses and deserializes state codes from the Census API
+   * and populates the stateNameToCode map.
    *
-   * @param
-   * @return
+   * @throws DatasourceException If an error occurs during data retrieval.
    */
   // should it return anything, probably no?
   // CHANGE THIS
@@ -65,10 +69,14 @@ public class CensusAPIUtilities implements CensusDataSource {
     }
   }
 
+  /**
+   * Accesses county codes for a state from the API and populates the countyNameToCode map.
+   *
+   * @param stateCode The state code.
+   * @throws DatasourceException If an error occurs during data retrieval.
+   */
   private static void accessCountyCodes(String stateCode) throws DatasourceException {
     //if(!stateNameToCode.containsKey())
-
-
     try {
 
       URL requestURL =
@@ -97,8 +105,12 @@ public class CensusAPIUtilities implements CensusDataSource {
   }
 
   /**
-   * Private helper method; throws IOException so different callers can handle differently if
-   * needed.
+   * Establishes an HTTP connection to the specified URL.
+   *
+   * @param requestURL The URL to connect to.
+   * @return The HttpURLConnection object representing the connection.
+   * @throws DatasourceException If an error occurs during connection establishment.
+   * @throws IOException If an I/O error occurs.
    */
   private static HttpURLConnection connect(URL requestURL) throws DatasourceException, IOException {
     System.out.println("URL + " + requestURL);
@@ -115,12 +127,27 @@ public class CensusAPIUtilities implements CensusDataSource {
     return clientConnection;
   }
 
+  /**
+   * Gets broadband subscription data for the location.
+   *
+   * @param location The location for which broadband subscription data is requested.
+   * @return The broadband subscription data for the specified location.
+   * @throws DatasourceException If an error occurs during data retrieval.
+   */
   @Override
   public AccessData getBroadbandSubscription(LocationData location) throws DatasourceException {
     System.out.println("calling getBroadBandSubscription");
     return getBroadbandSubscriptionHelper(location.state(), location.county());
   }
 
+  /**
+   * Helper method to get broadband subscription data for the state and county.
+   *
+   * @param state The name of the state.
+   * @param county The name of the county.
+   * @return The broadband subscription data for the specified state and county.
+   * @throws DatasourceException If an error occurs during data retrieval.
+   */
   public static AccessData getBroadbandSubscriptionHelper(String state, String county)
       throws DatasourceException {
     try {

@@ -10,6 +10,13 @@ import java.util.List;
  */
 public class IntegerListCreateFromRow implements CreatorFromRow<List<Integer>> {
 
+  /**
+   * Converts a list of strings into a list of integers.
+   *
+   * @param row The list of strings representing a row in the CSV.
+   * @return A list of integers parsed from the strings.
+   * @throws FactoryFailureException If any string in the row cannot be parsed as an integer.
+   */
   @Override
   public List<Integer> create(List<String> row) throws FactoryFailureException {
     List<Integer> integerList = new ArrayList<>();

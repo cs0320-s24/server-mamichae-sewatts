@@ -7,10 +7,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import server.DatasourceException;
 
+/**
+ * This class caches the results of broadband subscription data queries
+ * and reduces the number of expensive calls.
+ */
 public class CachingCensusDataSource implements CensusDataSource {
   private final CensusDataSource original;
   private final LoadingCache<LocationData, AccessData> cache;
 
+  /**
+   * Constructor for the CachingCensusDataSource.
+   *
+   * @param original The original CensusDataSource to be cached.
+   */
   public CachingCensusDataSource(CensusDataSource original) {
     this.original = original;
     this.cache =
@@ -25,6 +34,15 @@ public class CachingCensusDataSource implements CensusDataSource {
                 });
   }
 
+  /**
+   * Retrieves the broadband subscription data for the specified location.
+   * If  data is available in the cache, it is returned from the cache.
+   * If not, it is taken from original data source and stored in the cache for later use.
+   *
+   * @param location The location for which broadband subscription data is requested.
+   * @return The broadband subscription data for the specified location.
+   * @throws DatasourceException If an error occurs while retrieving datae.
+   */
   @Override
   public AccessData getBroadbandSubscription(LocationData location) throws DatasourceException {
     try {

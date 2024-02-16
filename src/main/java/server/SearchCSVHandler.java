@@ -15,17 +15,29 @@ import spark.Route;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
+/**
+ * Route handler for searching data within a loaded CSV file.
+ */
 public class SearchCSVHandler implements Route {
   private final AccessCSV csv;
 
+  /**
+   * Constructor for initializing the SearchCSVHandler with an AccessCSV instance.
+   *
+   * @param csv The AccessCSV instance to use for searching data.
+   */
   public SearchCSVHandler(AccessCSV csv) {
     this.csv = csv;
   }
 
-
-  //CHANGE ERROR HANDLING
-
-
+  /**
+   * Method to handle HTTP requests for searching data within a loaded CSV file.
+   *
+   * @param request  The HTTP request object.
+   * @param response The HTTP response object.
+   * @return The response data in JSON format.
+   * @throws DatasourceException If an error occurs while processing the data.
+   */
   @Override
   public Object handle(Request request, Response response) throws DatasourceException {
     String searchValue = request.queryParams("value");
@@ -81,6 +93,12 @@ public class SearchCSVHandler implements Route {
     return toJson(responseMap);
   }
 
+  /**
+   * Helper method to serialize an object to JSON format.
+   *
+   * @param object The object to serialize.
+   * @return The JSON representation of the object.
+   */
   private String toJson(Object object) {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Object> adapter = moshi.adapter(Object.class);

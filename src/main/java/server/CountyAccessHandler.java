@@ -16,13 +16,28 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Route handler for handling requests related to county access APU data.
+ */
 public class CountyAccessHandler implements Route {
     private CensusDataSource censusData;
 
+    /**
+     * Constructor for initializing the CountyAccessHandler with a CensusDataSource.
+     *
+     * @param censusData The data source for accessing census data.
+     */
     public CountyAccessHandler(CensusDataSource censusData) {
         this.censusData = censusData;
     }
 
+    /**
+     * Method to handle HTTP requests related to county access API data.
+     *
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @return The response data in JSON format.
+     */
     @Override
     public Object handle(Request request, Response response) {
         // Retrieve 'state' and 'county' query parameters

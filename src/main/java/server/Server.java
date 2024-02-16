@@ -16,8 +16,10 @@ public class Server {
   static final int port = 3232;
 
   /**
-   * @param
-   * @param
+   * Constructor for the Server class.
+   *
+   * @param accessCSV An instance of AccessCSV for handling CSV operations.
+   * @param census    An instance of CensusDataSource for accessing census data.
    */
   public Server(AccessCSV accessCSV, CensusDataSource census) {
 
@@ -38,6 +40,11 @@ public class Server {
     Spark.awaitInitialization();
   }
 
+  /**
+   * Main method to start the server.
+   *
+   * @param args Command-line arguments (not used here).
+   */
   public static void main(String[] args) {
     Server server = new Server(new AccessCSV(), new CachingCensusDataSource(new CensusAPIUtilities()));
     System.out.println("Server started at http://localhost:" + port);

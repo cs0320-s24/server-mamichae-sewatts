@@ -7,7 +7,7 @@
     Our Web API Server handles HTTP requests and returns data to clients through. 
     It manages different endpoints, and processes and fulfills requests.
     Team Members: Sylvie Watts (sewatts), Melanie Michael (mamichae)
-    Hours Spent: 17
+    Hours Spent: 15
     Repo: https://github.com/cs0320-s24/server-mamichae-sewatts
 
 # Design Choices

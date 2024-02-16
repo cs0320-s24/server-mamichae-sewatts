@@ -74,7 +74,7 @@ public class TestSearchHandler {
   }
 
   @Test
-  public void testSearchCSVHandlerSuccess() throws IOException {
+  public void testSuccessColumnID() throws IOException {
     HttpURLConnection loadCSVConnection =
         tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
     assertEquals(200, loadCSVConnection.getResponseCode());
@@ -85,6 +85,35 @@ public class TestSearchHandler {
 
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+
+    HashMap<String, Object> expectedMap = new HashMap<String, Object>();
+    List<List<String>> expectedList = new ArrayList<>();
+    List<String> innerList = List.of("RI", "White", "\" $1,058.47 \"", "395773.6521", " $1.00 ", "75%");
+    expectedList.add(innerList);
+
+    expectedMap.put("data", expectedList);
+    assertEquals(expectedMap.get("data"), response.get("data"));
+    assertEquals("success", response.get("result"));
+  }
+
+  @Test
+  public void testSuccessColumnName() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/census/postsecondary_education.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
+
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=0.069233258&columnID=share");
+    assertEquals(200, searchConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    HashMap<String, Object> expectedMap = new HashMap<String, Object>();
+    List<List<String>> expectedList = new ArrayList<>();
+    List<String> innerList = List.of("Asian","2020","2020","217156","Brown University","214","brown-university","0.069233258","Men","1");
+    expectedList.add(innerList);
+
+    expectedMap.put("data", expectedList);
+    assertEquals(expectedMap.get("data"), response.get("data"));
     assertEquals("success", response.get("result"));
   }
 
@@ -116,7 +145,24 @@ public class TestSearchHandler {
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
     assertEquals("error", response.get("result"));
-    assertEquals("csv file is empty", response.get("error"));
+    assertEquals("CSV file is empty", response.get("error"));
+
+  }
+
+  @Test
+  public void testFileNotFound() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/census/hello.csv&headers=false");
+    assertEquals(200, loadCSVConnection.getResponseCode());
+
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=hello&columnID=1");
+    assertEquals(200, searchConnection.getResponseCode());
+
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("no CSV loaded", response.get("error"));
 
   }
 

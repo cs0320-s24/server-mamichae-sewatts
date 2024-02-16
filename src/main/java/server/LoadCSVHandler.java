@@ -56,7 +56,7 @@ public class LoadCSVHandler implements Route {
 
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
-      responseMap.put("error", "File not found");
+      responseMap.put("error", "file not found");
       return responseMap;
     } catch (IllegalArgumentException e){
       responseMap.put("result", "error");

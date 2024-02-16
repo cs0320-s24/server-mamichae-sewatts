@@ -46,7 +46,7 @@ public class SearchCSVHandler implements Route {
         List<List<String>> parsedText = this.csv.getParsedText();
         if (parsedText.isEmpty()) {
           responseMap.put("result", "error");
-          responseMap.put("error", "csv file is empty");
+          responseMap.put("error", "CSV file is empty");
           return toJson(responseMap);
         }
         CSVSearcher searcher = new CSVSearcher(this.csv.getParsedText(), this.csv.getHeader(), this.csv.getHasHeaders());

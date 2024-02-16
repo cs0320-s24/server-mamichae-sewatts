@@ -79,31 +79,25 @@ public class TestViewHandler {
 
   @Test
   public void testFailure() throws IOException {
-    // setup w incorrect parameters
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?file=data/census/income_by_race.csv&headers=true");
-    // (the *connection* works, the *API* provides an error response)
     assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
     assertEquals(200, viewConnection.getResponseCode());
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(viewConnection.getInputStream()));
-    // error is correctly returned from response map
     assertEquals("error", response.get("result"));
   }
 
   @Test
   public void testFailureEmptyFile() throws IOException {
-    // setup w incorrect parameters
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?filepath=data/census/empty.csv&headers=false");
-    // (the *connection* works, the *API* provides an error response)
     assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
     assertEquals(200, viewConnection.getResponseCode());
     Map<String, Object> response =
         adapter.fromJson(new Buffer().readFrom(viewConnection.getInputStream()));
-    // error is correctly returned from response map
     assertEquals("success - file is empty", response.get("result"));
   }
 }

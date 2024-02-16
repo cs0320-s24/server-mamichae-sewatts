@@ -26,6 +26,7 @@ import spark.Spark;
 
 public class TestLoadHandler {
   private final JsonAdapter<Map<String, Object>> adapter;
+  AccessCSV accessCSV;
 
   public TestLoadHandler() {
     Moshi moshi = new Moshi.Builder().build();
@@ -36,12 +37,12 @@ public class TestLoadHandler {
   @BeforeAll
   public static void setupBeforeAll() {
     Spark.port(0);
-    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+    Logger.getLogger("").setLevel(Level.WARNING);
   }
 
   @BeforeEach
   public void setupBeforeEach() {
-    AccessCSV accessCSV = new AccessCSV();
+    this.accessCSV = new AccessCSV();
     Spark.get("/loadcsv", new LoadCSVHandler(accessCSV));
     Spark.get("/searchcsv", new SearchCSVHandler(accessCSV));
     Spark.get("/viewcsv", new ViewCSVHandler(accessCSV));
@@ -51,11 +52,10 @@ public class TestLoadHandler {
 
   @AfterEach
   public void tearDownAfterEach() {
-    // Gracefully stop Spark listening on both endpoints after each test
     Spark.unmap("loadcsv");
     Spark.unmap("searchcsv");
     Spark.unmap("viewcsv");
-    Spark.awaitStop(); // don't proceed until the server is stopped
+    Spark.awaitStop();
   }
 
   private Map<String, Object> getResponseMap(HttpURLConnection connection) throws IOException {
@@ -77,17 +77,15 @@ public class TestLoadHandler {
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?filepath=data/census/income_by_race.csv&headers=true");
     assertEquals(200, loadConnection.getResponseCode());
-    Map<String, Object> responseMap = getResponseMap(loadConnection);
-    assertEquals("error", responseMap.get("result"));
-    assertEquals("missing_parameter", responseMap.get("error"));
+    assertEquals(true, this.accessCSV.getLoaded());
+
   }
 
   @Test
   public void testFailureBadQuery() throws IOException {
-    // setup with incorrect parameters
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?file=data/census/income_by_race.csv");
-    // the connection works, the API provides an error response
     assertEquals(200, loadConnection.getResponseCode());
+    assertEquals(false, this.accessCSV.getLoaded());
   }
 }

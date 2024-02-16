@@ -35,7 +35,7 @@ public class TestViewHandler {
   @BeforeAll
   public static void setupBeforeAll() {
     Spark.port(0);
-    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+    Logger.getLogger("").setLevel(Level.WARNING);
   }
 
   @BeforeEach
@@ -50,11 +50,10 @@ public class TestViewHandler {
 
   @AfterEach
   public void tearDownAfterEach() {
-    // Gracefully stop Spark listening on both endpoints after each test
     Spark.unmap("loadcsv");
     Spark.unmap("searchcsv");
     Spark.unmap("viewcsv");
-    Spark.awaitStop(); // don't proceed until the server is stopped
+    Spark.awaitStop();
   }
 
   private HttpURLConnection tryRequest(String apiCall) throws IOException {
@@ -78,7 +77,7 @@ public class TestViewHandler {
   }
 
   @Test
-  public void testFailure() throws IOException {
+  public void testFailureBadPath() throws IOException {
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?file=data/census/income_by_race.csv&headers=true");
     assertEquals(200, loadConnection.getResponseCode());

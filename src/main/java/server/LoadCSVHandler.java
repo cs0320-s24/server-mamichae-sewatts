@@ -30,8 +30,6 @@ public class LoadCSVHandler implements Route {
     Map<String, String> responseMap = new HashMap<>();
 
     if (filepath == null || hasHeaders == null){
-//      responseMap.put("query_filepath", filepath);
-//      responseMap.put("query_headers", headers);
       responseMap.put("error", "missing_parameter");
       responseMap.put("result", "error");
       return responseMap;

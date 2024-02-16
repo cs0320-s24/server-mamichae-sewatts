@@ -41,14 +41,13 @@ public class CachingCensusDataSource implements CensusDataSource {
    *
    * @param location The location for which broadband subscription data is requested.
    * @return The broadband subscription data for the specified location.
-   * @throws DatasourceException If an error occurs while retrieving datae.
+   * @throws DatasourceException If an error occurs while retrieving data.
    */
   @Override
   public AccessData getBroadbandSubscription(LocationData location) throws DatasourceException {
     try {
       return cache.get(location, () -> original.getBroadbandSubscription(location));
     } catch (ExecutionException e) {
-      // Extract the cause of the exception and rethrow, CHECK THIS
       Throwable cause = e.getCause();
       if (cause instanceof DatasourceException) {
         throw (DatasourceException) cause;

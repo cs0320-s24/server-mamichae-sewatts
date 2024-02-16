@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Route handler for handling requests related to county access APU data.
+ * Route handler for handling requests related to county access API data.
  */
 public class CountyAccessHandler implements Route {
     private CensusDataSource censusData;

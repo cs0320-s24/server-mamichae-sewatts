@@ -11,6 +11,15 @@ import spark.Spark;
 /**
  * Class that takes in user's requests and directs them to the proper handlers to carry out the
  * searches.
+ *
+ * To run the program, run the main method
+ * In local host with the browser
+ * To run LoadCSV, add /loadcsv?filepath={input filepath}&headers={boolean true/false}
+ * To run ViewCSV, add /viewcsv
+ * To run SearchCSV, add /searchcsv?value={search value}&columnID={number or String name}
+ * For SearchCSV, addition of &columnID={number or String name} is optional
+ * To run broadband, add /broadband?state={String state name}&county={String county name}
+ * If the user inputs an incorrect State or county, the Server lets them know that
  */
 public class Server {
   static final int port = 3232;

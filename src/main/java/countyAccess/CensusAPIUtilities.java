@@ -35,8 +35,6 @@ public class CensusAPIUtilities implements CensusDataSource {
    *
    * @throws DatasourceException If an error occurs during data retrieval.
    */
-  // should it return anything, probably no?
-  // CHANGE THIS
   private static void accessStateCodes() throws DatasourceException {
     if(!stateNameToCode.isEmpty()) {
       return;
@@ -56,14 +54,14 @@ public class CensusAPIUtilities implements CensusDataSource {
           adapter.fromJson(new Buffer().readFrom(clientStateConnection.getInputStream()));
       clientStateConnection.disconnect();
 
+      if (states == null) {
+        throw new DatasourceException("Malformed response from Census API");
+      }
+
       for (int i = 1; i < states.size(); i++) {
         stateNameToCode.put(states.get(i).get(0), states.get(i).get(1));
       }
 
-      // check this, put in a message
-      if (states == null) {
-        throw new DatasourceException("Malformed response from Census API");
-      }
     } catch (IOException e) {
       throw new DatasourceException(e.getMessage());
     }
@@ -76,7 +74,9 @@ public class CensusAPIUtilities implements CensusDataSource {
    * @throws DatasourceException If an error occurs during data retrieval.
    */
   private static void accessCountyCodes(String stateCode) throws DatasourceException {
-    //if(!stateNameToCode.containsKey())
+    if(!stateNameToCode.containsValue(stateCode)) {
+      throw new DatasourceException("Invalid state input");
+    }
     try {
 
       URL requestURL =
@@ -95,6 +95,10 @@ public class CensusAPIUtilities implements CensusDataSource {
       List<List<String>> counties =
           adapter.fromJson(new Buffer().readFrom(clientStateConnection.getInputStream()));
       clientStateConnection.disconnect();
+
+      if (counties == null) {
+        throw new DatasourceException("Malformed response from Census API");
+      }
 
       for (int i = 1; i < counties.size(); i++) {
         countyNameToCode.put(counties.get(i).get(0), counties.get(i).get(2));
@@ -156,8 +160,13 @@ public class CensusAPIUtilities implements CensusDataSource {
 
       accessCountyCodes(stateCode);
 
+
       String countyName = county + ", " + state;
       String countyCode = countyNameToCode.get(countyName);
+
+      if(countyCode == null) {
+        throw new DatasourceException("Invalid county input");
+      }
 
       URL requestURL =
           new URL(

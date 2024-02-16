@@ -31,7 +31,16 @@ public class CSVSearcher {
     this.headerList = this.parser.getHeaderList();
   }
 
-
+  /**
+   * Second constructor, instead of taking in Parser object,
+   * takes in parsed test, headers, and header boolean indicator
+   * @param parsedText
+   * @param headerList
+   * @param hasHeader
+   * @throws IOException
+   * @throws FactoryFailureException
+   * @throws InconsistentRowException
+   */
   public CSVSearcher(List<List<String>> parsedText, List<String> headerList, Boolean hasHeader) throws IOException, FactoryFailureException, InconsistentRowException {
     this.listOfStringRows = parsedText;
     this.headerList = headerList;

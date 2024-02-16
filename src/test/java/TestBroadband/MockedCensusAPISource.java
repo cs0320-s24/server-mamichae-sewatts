@@ -6,9 +6,8 @@ import countyAccess.LocationData;
 import server.DatasourceException;
 
 /**
- * A datasource that never actually calls the NWS API, but always returns a constant
- * weather-data value. This is very useful in testing, and avoiding the costs of
- * real API invocations. The technique is called "mocking", as in "faking".
+ * A datasource that never actually calls the Census API, but always returns a constant
+ * access data value.
  */
 public class MockedCensusAPISource implements CensusDataSource {
   private final AccessData constantData;

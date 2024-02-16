@@ -53,6 +53,7 @@ public class CountyAccessHandler implements Route {
 
         Map<String, Object> responseMap = new HashMap<>();
 
+
         try {
             LocationData location = new LocationData(state, county);
 

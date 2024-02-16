@@ -29,23 +29,19 @@ public class LoadCSVHandler implements Route {
     Boolean hasHeaders = Boolean.valueOf(request.queryParams("headers"));
     Map<String, String> responseMap = new HashMap<>();
 
-    // check if query parameters are null
     if (filepath == null || hasHeaders == null){
-      responseMap.put("query_filepath", filepath);
-      responseMap.put("query_headers", headers);
-      responseMap.put("type", "error");
-      responseMap.put("error_type", "missing_parameter");
-      responseMap.put("error_arg", filepath == null ? "filepath" : "headers");
+//      responseMap.put("query_filepath", filepath);
+//      responseMap.put("query_headers", headers);
+      responseMap.put("error", "missing_parameter");
+      responseMap.put("result", "error");
       return responseMap;
     }
     this.csv.setHasHeaders(hasHeaders);
 
-    // need buffered? or just file reader
     try {
       BufferedReader reader = new BufferedReader(new FileReader(filepath));
       CSVParser parser = new CSVParser(reader, new StringListCreateFromRow(), hasHeaders);
       List<List<String>> parsedData = parser.parse();
-
 
       this.csv.setParsedText(parsedData);
       if (hasHeaders) {
@@ -53,7 +49,6 @@ public class LoadCSVHandler implements Route {
         this.csv.setHeaders(parser.getHeaderList());
       }
       this.csv.setLoaded(true);
-
 
       responseMap.put("result", "success");
       responseMap.put("filepath", filepath);

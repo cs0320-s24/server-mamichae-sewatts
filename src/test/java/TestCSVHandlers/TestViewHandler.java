@@ -1,3 +1,5 @@
+package TestCSVHandlers;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import CSV.AccessCSV;
@@ -21,10 +23,10 @@ import server.SearchCSVHandler;
 import server.ViewCSVHandler;
 import spark.Spark;
 
-public class TestHandlers {
+public class TestViewHandler {
   private final JsonAdapter<Map<String, Object>> adapter;
 
-  public TestHandlers() {
+  public TestViewHandler() {
     Moshi moshi = new Moshi.Builder().build();
     java.lang.reflect.Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
     adapter = moshi.adapter(type);
@@ -64,9 +66,9 @@ public class TestHandlers {
   }
 
   @Test
-  public void testViewCSVHandlerSuccess() throws IOException {
+  public void testSuccess() throws IOException {
     HttpURLConnection loadConnection =
-        tryRequest("loadcsv?filepath=data/census/income_by_race.csv");
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv&headers=true");
     assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
     assertEquals(200, viewConnection.getResponseCode());
@@ -76,10 +78,10 @@ public class TestHandlers {
   }
 
   @Test
-  public void testViewCSVHandlerFailure() throws IOException {
+  public void testFailure() throws IOException {
     // setup w incorrect parameters
     HttpURLConnection loadConnection =
-        tryRequest("loadcsv?file=data/census/income_by_race.csv");
+        tryRequest("loadcsv?file=data/census/income_by_race.csv&headers=true");
     // (the *connection* works, the *API* provides an error response)
     assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
@@ -91,66 +93,17 @@ public class TestHandlers {
   }
 
   @Test
-  public void testSearchCSVHandlerSuccess() throws IOException {
-    HttpURLConnection loadCSVConnection =
-        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
-    assertEquals(200, loadCSVConnection.getResponseCode());
-
-    HttpURLConnection searchConnection =
-        tryRequest("searchcsv?value=White&columnID=1");
-    assertEquals(200, searchConnection.getResponseCode());
-
+  public void testFailureEmptyFile() throws IOException {
+    // setup w incorrect parameters
+    HttpURLConnection loadConnection =
+        tryRequest("loadcsv?filepath=data/census/empty.csv&headers=false");
+    // (the *connection* works, the *API* provides an error response)
+    assertEquals(200, loadConnection.getResponseCode());
+    HttpURLConnection viewConnection = tryRequest("viewcsv");
+    assertEquals(200, viewConnection.getResponseCode());
     Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
-    assertEquals("success", response.get("result"));
-  }
-
-  @Test
-  public void testSearchCSVHandlerFailureBadPath() throws IOException {
-    HttpURLConnection loadCSVConnection =
-        tryRequest("loadcsv?path=data/census/dol_ri_earnings_disparity.csv&headers=true");
-    assertEquals(200, loadCSVConnection.getResponseCode());
-
-    HttpURLConnection searchConnection =
-        tryRequest("searchcsv?value=White&columnID=1");
-    assertEquals(200, searchConnection.getResponseCode());
-
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
-    assertEquals("error", response.get("result"));
-  }
-
-  @Test
-  public void testSearchCSVHandlerFailureBadValueQuery() throws IOException {
-    HttpURLConnection loadCSVConnection =
-        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
-    assertEquals(200, loadCSVConnection.getResponseCode());
-
-    // value not in csv data
-    HttpURLConnection searchConnection =
-        tryRequest("searchcsv?value=Blue&columnID=1");
-    assertEquals(200, searchConnection.getResponseCode());
-
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
-    assertEquals("success", response.get("result"));
-    assertEquals(new ArrayList<>(), response.get("data"));
-  }
-
-  @Test
-  public void testSearchCSVHandlerFailureBadColumnIDQuery() throws IOException {
-    HttpURLConnection loadCSVConnection =
-        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
-    assertEquals(200, loadCSVConnection.getResponseCode());
-
-    // columnID out of scope
-    HttpURLConnection searchConnection =
-        tryRequest("searchcsv?value=Black&columnID=8");
-    assertEquals(200, searchConnection.getResponseCode());
-
-    Map<String, Object> response =
-        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
-    assertEquals("error", response.get("result"));
-    assertEquals("columnID not found", response.get("error"));
+        adapter.fromJson(new Buffer().readFrom(viewConnection.getInputStream()));
+    // error is correctly returned from response map
+    assertEquals("success - file is empty", response.get("result"));
   }
 }

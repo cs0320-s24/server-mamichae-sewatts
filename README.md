@@ -44,4 +44,12 @@
     and failure with bad filepath and empty files. 
     The TestBroadband tests for success with queries to the API census, using a mocked data source. 
 
-# How to
+# How to    
+    To run the program, run the main method
+    In local host with the browser
+    To run LoadCSV, add /loadcsv?filepath={input filepath}&headers={boolean true/false}
+    To run ViewCSV, add /viewcsv
+    To run SearchCSV, add /searchcsv?value={search value}&columnID={number or String name}
+    For SearchCSV, addition of &columnID={number or String name} is optional
+    To run broadband, add /broadband?state={String state name}&county={String county name}
+    If the user inputs an incorrect State or county, the Server lets them know that

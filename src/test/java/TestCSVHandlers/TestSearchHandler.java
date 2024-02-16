@@ -43,7 +43,7 @@ public class TestSearchHandler {
   @BeforeAll
   public static void setupBeforeAll() {
     Spark.port(0);
-    Logger.getLogger("").setLevel(Level.WARNING); // empty name = root logger
+    Logger.getLogger("").setLevel(Level.WARNING);
   }
 
   @BeforeEach
@@ -135,7 +135,7 @@ public class TestSearchHandler {
   @Test
   public void testEmptyFile() throws IOException {
     HttpURLConnection loadCSVConnection =
-        tryRequest("loadcsv?filepath=data/census/empty.csv&headers=false");
+        tryRequest("loadcsv?filepath=data/edge/empty.csv&headers=false");
     assertEquals(200, loadCSVConnection.getResponseCode());
 
     HttpURLConnection searchConnection =
@@ -189,7 +189,6 @@ public class TestSearchHandler {
         tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
     assertEquals(200, loadCSVConnection.getResponseCode());
 
-    // columnID out of scope
     HttpURLConnection searchConnection =
         tryRequest("searchcsv?value=Black&columnID=8");
     assertEquals(200, searchConnection.getResponseCode());
@@ -200,17 +199,52 @@ public class TestSearchHandler {
     assertEquals("columnID not found", response.get("error"));
   }
 
+  @Test
+  public void testMalformedData() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/malformed/malformed_signs.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
 
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=Aries&columnID=Member");
+    assertEquals(200, searchConnection.getResponseCode());
 
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("no CSV loaded", response.get("error"));
+  }
 
+  @Test
+  public void testMissingParametersValue() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/census/dol_ri_earnings_disparity.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
 
-  //////////////////////
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?columnID=8");
+    assertEquals(200, searchConnection.getResponseCode());
 
-// with headers no column id
-// with no headers no column id
-// column id
-// column name
-// load improper file
-// empty returns proper return message
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("missing or invalid search parameters", response.get("error"));
+  }
+
+  @Test
+  public void testMissingParametersColumn() throws IOException {
+    HttpURLConnection loadCSVConnection =
+        tryRequest("loadcsv?filepath=data/malformed/malformed_signs.csv&headers=true");
+    assertEquals(200, loadCSVConnection.getResponseCode());
+
+    HttpURLConnection searchConnection =
+        tryRequest("searchcsv?value=Black");
+    assertEquals(200, searchConnection.getResponseCode());
+
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(searchConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("missing or invalid search parameters", response.get("error"));
+  }
 
 }

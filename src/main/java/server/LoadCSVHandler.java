@@ -1,6 +1,8 @@
 package server;
 
 import CSV.*;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -29,10 +31,10 @@ public class LoadCSVHandler implements Route {
     Boolean hasHeaders = Boolean.valueOf(request.queryParams("headers"));
     Map<String, String> responseMap = new HashMap<>();
 
-    if (filepath == null || hasHeaders == null){
-      responseMap.put("error", "missing_parameter");
+    if (filepath == null || headers == null){
+      responseMap.put("error", "bad parameter");
       responseMap.put("result", "error");
-      return responseMap;
+      return toJson(responseMap);
     }
     this.csv.setHasHeaders(hasHeaders);
 
@@ -50,18 +52,28 @@ public class LoadCSVHandler implements Route {
 
       responseMap.put("result", "success");
       responseMap.put("filepath", filepath);
-      return responseMap;
+      return toJson(responseMap);
 
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       responseMap.put("error", "file not found");
-      return responseMap;
+      return toJson(responseMap);
     } catch (IllegalArgumentException e){
       responseMap.put("result", "error");
       responseMap.put("error", "bad parameter");
-      return responseMap;
+      return toJson(responseMap);
+    } catch (InconsistentRowException e){
+        responseMap.put("result", "error");
+        responseMap.put("error", "malformed CSV data");
+        return toJson(responseMap);
     }
 
+  }
+
+  private String toJson(Object object) {
+    Moshi moshi = new Moshi.Builder().build();
+    JsonAdapter<Object> adapter = moshi.adapter(Object.class);
+    return adapter.toJson(object);
   }
 
 }

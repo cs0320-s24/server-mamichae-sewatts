@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import okio.Buffer;
 import org.junit.jupiter.api.AfterEach;
@@ -25,9 +27,10 @@ import spark.Spark;
 
 public class TestViewHandler {
   private final JsonAdapter<Map<String, Object>> adapter;
+  private final Moshi moshi;
 
   public TestViewHandler() {
-    Moshi moshi = new Moshi.Builder().build();
+    this.moshi = new Moshi.Builder().build();
     java.lang.reflect.Type type = Types.newParameterizedType(Map.class, String.class, Object.class);
     adapter = moshi.adapter(type);
   }
@@ -77,6 +80,25 @@ public class TestViewHandler {
   }
 
   @Test
+  public void testSuccessDataOutput() throws IOException {
+    HttpURLConnection loadConnection =
+        tryRequest("loadcsv?filepath=data/edge/simple.csv&headers=false");
+    assertEquals(200, loadConnection.getResponseCode());
+    HttpURLConnection viewConnection = tryRequest("viewcsv");
+    assertEquals(200, viewConnection.getResponseCode());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(viewConnection.getInputStream()));
+
+    List<List<String>> responseData = this.moshi.adapter(List.class).fromJson((String) response.get("data"));
+
+    List<List<String>> expectedData = new ArrayList<>();
+    expectedData.add(List.of("hello"));
+
+    assertEquals(expectedData, responseData);
+    assertEquals("success", response.get("result"));
+  }
+
+  @Test
   public void testFailureBadPath() throws IOException {
     HttpURLConnection loadConnection =
         tryRequest("loadcsv?file=data/census/income_by_race.csv&headers=true");
@@ -91,7 +113,7 @@ public class TestViewHandler {
   @Test
   public void testFailureEmptyFile() throws IOException {
     HttpURLConnection loadConnection =
-        tryRequest("loadcsv?filepath=data/census/empty.csv&headers=false");
+        tryRequest("loadcsv?filepath=data/edge/empty.csv&headers=false");
     assertEquals(200, loadConnection.getResponseCode());
     HttpURLConnection viewConnection = tryRequest("viewcsv");
     assertEquals(200, viewConnection.getResponseCode());

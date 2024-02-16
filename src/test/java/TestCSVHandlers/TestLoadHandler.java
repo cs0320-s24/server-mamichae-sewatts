@@ -43,9 +43,9 @@ public class TestLoadHandler {
   @BeforeEach
   public void setupBeforeEach() {
     this.accessCSV = new AccessCSV();
-    Spark.get("/loadcsv", new LoadCSVHandler(accessCSV));
-    Spark.get("/searchcsv", new SearchCSVHandler(accessCSV));
-    Spark.get("/viewcsv", new ViewCSVHandler(accessCSV));
+    Spark.get("/loadcsv", new LoadCSVHandler(this.accessCSV));
+    Spark.get("/searchcsv", new SearchCSVHandler(this.accessCSV));
+    Spark.get("/viewcsv", new ViewCSVHandler(this.accessCSV));
     Spark.init();
     Spark.awaitInitialization();
   }
@@ -78,14 +78,45 @@ public class TestLoadHandler {
         tryRequest("loadcsv?filepath=data/census/income_by_race.csv&headers=true");
     assertEquals(200, loadConnection.getResponseCode());
     assertEquals(true, this.accessCSV.getLoaded());
-
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(loadConnection.getInputStream()));
+    assertEquals("success", response.get("result"));
+    assertEquals("data/census/income_by_race.csv", response.get("filepath"));
   }
 
   @Test
   public void testFailureBadQuery() throws IOException {
     HttpURLConnection loadConnection =
-        tryRequest("loadcsv?file=data/census/income_by_race.csv");
+        tryRequest("loadcsv?file=data/census/income_by_race.csv&headers=true");
     assertEquals(200, loadConnection.getResponseCode());
     assertEquals(false, this.accessCSV.getLoaded());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(loadConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("bad parameter", response.get("error"));
+  }
+
+  @Test
+  public void testFailureMissingParameter() throws IOException {
+    HttpURLConnection loadConnection =
+        tryRequest("loadcsv?filepath=data/census/income_by_race.csv");
+    assertEquals(200, loadConnection.getResponseCode());
+    assertEquals(false, this.accessCSV.getLoaded());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(loadConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("bad parameter", response.get("error"));
+  }
+
+  @Test
+  public void testFailureMalformedData() throws IOException {
+    HttpURLConnection loadConnection =
+        tryRequest("loadcsv?filepath=data/malformed/malformed_signs.csv&headers=true");
+    assertEquals(200, loadConnection.getResponseCode());
+    assertEquals(false, this.accessCSV.getLoaded());
+    Map<String, Object> response =
+        adapter.fromJson(new Buffer().readFrom(loadConnection.getInputStream()));
+    assertEquals("error", response.get("result"));
+    assertEquals("malformed CSV data", response.get("error"));
   }
 }

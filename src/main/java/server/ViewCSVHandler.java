@@ -38,7 +38,6 @@ public class ViewCSVHandler implements Route {
       responseMap.put("result", "error");
       responseMap.put("error", "error while processing data");
     }
-    // have to return response map within try/catch?
     return toJson(responseMap);
   }
 

@@ -6,7 +6,9 @@ import countyAccess.LocationData;
 import server.DatasourceException;
 
 /**
- *
+ * A datasource that never actually calls the Census API, but always returns a constant
+ * access data value.
+
  */
 public class MockedCensusAPISource implements CensusDataSource {
   private final AccessData constantData;
